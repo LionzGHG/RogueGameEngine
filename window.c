@@ -6,6 +6,7 @@
 #include "window.h"
 #include "render.h"
 #include "fs.h"
+#include "util.h"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
@@ -100,12 +101,36 @@ void OpenWindow(Window* window) {
     ShowWindow(window->hwnd, SW_SHOW);
 
     MSG msg = {0};
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        if (msg.message == WM_QUIT) {
-            break;
+    
+    InitTimer();
+    float lastTime = GetTime();
+    float accumulator = 0.0f;
+    const float maxDeltaTime = 0.1f;
+    const float fixedTimeStep = 1.0f / 60.0f; // semi-fixed updates (60 FPS)
+
+    while (1) {
+        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) {
+                return;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+
+        float currentTime = GetTime();
+        float deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
+        if (deltaTime > maxDeltaTime) deltaTime = maxDeltaTime;
+
+        accumulator += deltaTime;
+        
+        while (accumulator >= fixedTimeStep) {
+            window->activeScene->update(window->activeScene, fixedTimeStep);
+            accumulator -= fixedTimeStep;
+        }
+
+        InvalidateRect(window->hwnd, NULL, FALSE);
     }
 }
 

@@ -2,8 +2,10 @@
 #include "core.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "assets.h"
 
-Scene* InitScene() {
+
+Scene* InitScene(const char* name, void (*update)(Scene* this, float dt)) {
     Scene* scene = (Scene*)malloc(sizeof(Scene));
 
     if (!scene) {
@@ -11,8 +13,13 @@ Scene* InitScene() {
         exit(EXIT_FAILURE);
     }
 
+    //scene->asset.name = name;   
+    scene->update = update;
+
     scene->actors = NULL;
     scene->numActors = 0;
+
+    //LoadAsset((Asset*)scene);
     return scene;
 }
 
@@ -29,6 +36,18 @@ void SetScene(Window* window, Scene* scene) {
 
 Scene* GetScene(Window* window) {
     return window->activeScene;
+}
+
+Actor* GetActor(Scene* scene, const char* id) {
+    for (size_t i = 0; i < scene->numActors; ++i) {
+        Actor* actor = &scene->actors[i];
+        if (strcmp(actor->id, id) == 0) {
+            return actor;
+        }
+    }
+
+    fprintf(stderr, "ERROR: Actor '%s' does not exist in this Scene!\n", id);
+    exit(EXIT_FAILURE);
 }
 
 void AddActor(Scene* scene, Actor* actor) {

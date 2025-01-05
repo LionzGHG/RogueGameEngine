@@ -4,7 +4,7 @@ CFLAGS = -Wall
 LDFLAGS = -lgdi32
 
 # Source files
-SRCS = main.c window.c render.c core.c traits.c math.c fs.c assets.c
+SRCS = main.c window.c render.c core.c traits.c math.c fs.c assets.c util.c
 
 # Object files (derived from source files)
 OBJS = $(SRCS:.c=.o)

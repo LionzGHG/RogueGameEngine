@@ -1,12 +1,12 @@
 
-#include <stdio.h>
-#include "window.h"
-#include "core.h"
-#include "render.h"
-#include "fs.h"
+#include "rogue.h"
+
+void update(Scene* scene, float dt) {
+    GetActor(scene, "My Actor")->transform->position.x += 50.0f * dt;
+}
 
 int main() {
-    Scene* myScene = InitScene();
+    Scene* myScene = InitScene("myScene", update);
 
     Actor* myActor = InitActor("My Actor");
 
