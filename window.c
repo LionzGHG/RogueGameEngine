@@ -5,23 +5,22 @@
 
 #include "window.h"
 #include "render.h"
+#include "fs.h"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
         case WM_DESTROY:
-            Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-            DestroyRWindow(window);
-
             PostQuitMessage(0);
             return 0;
         case WM_PAINT:
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
-            
+
             Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
             if (!window) {
-                fprintf(stderr, "ERROR: Window pointer is NULL.\n");
-                break;
+               fprintf(stderr, "ERROR: Window pointer is NULL.\n");
+               exit(EXIT_FAILURE);
             }
 
             if (window->activeScene->actors != NULL) {
@@ -32,37 +31,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                         for (size_t j = 0; j < actor->numTraits; ++j) {
                             Trait* trait = &actor->traits[j];
 
-                            if (strcmp(trait->id, TR_RENDERER) == 0) {
-                                Renderer* renderer = (Renderer*)trait;
+                            if (strcmp(trait->id, TR_RENDERER) == 0) 
+                                Render(actor, window);
 
-                                switch (renderer->ptype) {
-                                    case RECTANGLE:
-                                        Primitive* rect = InitPrimitive(
-                                            RECTANGLE, 
-                                            actor->transform->position.x, 
-                                            actor->transform->position.y, 
-                                            actor->transform->scale.x, 
-                                            actor->transform->scale.y, 
-                                            renderer->fillColor,
-                                            renderer->borderColor,
-                                            renderer->borderWidth
-                                        );
-
-                                        DrawPrimitive(window, rect);
-                                        free(rect);
-                                        break;
-                                    default:
-                                        printf("WARNING: Currently unsupported primitive type %d.\n", renderer->ptype);
-                                        break;
-                                }
-                            }
+                            if (strcmp(trait->id, TR_PNG_RENDERER) == 0) 
+                                RenderPng(actor, window, &hdc);
                         }
-                    } else {
-                        printf("No Traits for Actor %s!\n", actor->id);
                     }
                 }
-            } else {
-                printf("No Actors!\n");
             }
             
             EndPaint(hwnd, &ps);

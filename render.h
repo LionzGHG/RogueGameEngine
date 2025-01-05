@@ -46,6 +46,7 @@ Primitive* InitPrimitive(PrimitiveType ptype, int x, int y, int width, int heigh
 void DrawPrimitive(Window* window, Primitive* p);
 
 Trait* InitRenderer(PrimitiveType ptype, Color fillColor, Color borderColor, int borderWidth);
+void Render(Actor* actor, Window* window);
 
 Color rgb(unsigned char r, unsigned char g, unsigned char b);
 Color rgba(unsigned char r, unsigned char g, unsigned char b, unsigned char a);

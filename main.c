@@ -3,6 +3,7 @@
 #include "window.h"
 #include "core.h"
 #include "render.h"
+#include "fs.h"
 
 int main() {
     Scene* myScene = InitScene();
@@ -11,7 +12,11 @@ int main() {
 
     myActor->transform->scale = Vec2(400.0f, 250.0f);
 
-    Trait* renderer = InitRenderer(RECTANGLE, CL_RED, CL_RED, 2);
+    //Trait* renderer = InitRenderer(RECTANGLE, CL_RED, CL_RED, 2);
+    //AddTrait(myActor, renderer);
+
+    LoadImage2D("example.png");
+    Trait* renderer = InitPngRenderer((Image2D*)GetAsset("example.png"));
     AddTrait(myActor, renderer);
 
     AddActor(myScene, myActor);

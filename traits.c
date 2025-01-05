@@ -17,8 +17,8 @@ Trait* InitTransform() {
     }
     transform->trait->id = TR_TRANSFORM;
     
-    transform->position = vec2(100.0f, 100.0f);
-    transform->scale = vec2(100.0f, 100.0f);
+    transform->position = Vec2(100.0f, 100.0f);
+    transform->scale = Vec2(100.0f, 100.0f);
 
     return (Trait*)transform;
 }

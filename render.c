@@ -89,3 +89,28 @@ Trait* InitRenderer(PrimitiveType ptype, Color fillColor, Color borderColor, int
 
     return (Trait*)renderer;
 }
+
+void Render(Actor* actor, Window* window) {
+    Renderer* renderer = (Renderer*)GetTrait(actor, TR_RENDERER);
+
+    switch (renderer->ptype) {
+        case RECTANGLE:
+            Primitive* rect = InitPrimitive(
+                RECTANGLE,
+                actor->transform->position.x,
+                actor->transform->position.y,
+                actor->transform->scale.x,
+                actor->transform->scale.y,
+                renderer->fillColor,
+                renderer->borderColor,
+                renderer->borderWidth
+            );
+
+            DrawPrimitive(window, rect);
+            free(rect);
+            break;
+        default:
+            printf("WARNING: Currently unsupported primitive type %d\n", renderer->ptype);
+            break;
+    }
+}
